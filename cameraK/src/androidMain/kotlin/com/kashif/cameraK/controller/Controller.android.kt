@@ -62,7 +62,6 @@ actual class CameraController(
 
     private val imageProcessingExecutor = Executors.newFixedThreadPool(2)
 
-
     private var isCapturing = false
 
     fun bindCamera(previewView: PreviewView, onCameraReady: () -> Unit = {}) {
@@ -187,9 +186,7 @@ actual class CameraController(
 
             val captureRequested = burstCaptureManager.requestCapture(
                 captureFunction = {
-
-                    val quality = burstCaptureManager.getOptimalQuality()
-                    performCapture(cont, quality)
+                    performCapture(cont)
                 },
                 onComplete = {
 
@@ -207,8 +204,7 @@ actual class CameraController(
      * Perform the actual image capture with the specified quality
      */
     private fun performCapture(
-        continuation: CancellableContinuation<ImageCaptureResult>,
-        quality: Int
+        continuation: CancellableContinuation<ImageCaptureResult>
     ) {
         val outputOptions = ImageCapture.OutputFileOptions.Builder(createTempFile()).build()
 
@@ -217,9 +213,13 @@ actual class CameraController(
             ContextCompat.getMainExecutor(context),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-
                     imageProcessingExecutor.execute {
-                        val byteArray = processImageOutput(output, quality)
+                        val imagePath = output.savedUri?.path
+                        val byteArray = if (imagePath == null) {
+                            null
+                        } else {
+                            File(imagePath).readBytes()
+                        }
 
                         if (byteArray != null) {
                             imageCaptureListeners.forEach { it(byteArray) }
