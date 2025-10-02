@@ -57,6 +57,7 @@ import com.kashif.cameraK.enums.CameraLens
 import com.kashif.cameraK.enums.Directory
 import com.kashif.cameraK.enums.FlashMode
 import com.kashif.cameraK.enums.ImageFormat
+import com.kashif.cameraK.enums.PinchToZoom
 import com.kashif.cameraK.enums.QualityPrioritization
 import com.kashif.cameraK.enums.TorchMode
 import com.kashif.cameraK.permissions.Permissions
@@ -158,6 +159,7 @@ private fun CameraContent(
                 setImageFormat(ImageFormat.JPEG)
                 setDirectory(Directory.PICTURES)
                 setTorchMode(TorchMode.OFF)
+                setPinchToZoom(PinchToZoom.ON)
                 setQualityPrioritization(QualityPrioritization.QUALITY)
                 addPlugin(imageSaverPlugin)
             },
