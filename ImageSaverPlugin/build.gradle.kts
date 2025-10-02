@@ -1,11 +1,10 @@
-import com.vanniktech.maven.publish.SonatypeHost
-
 plugins {
     alias(libs.plugins.multiplatform)
     alias(libs.plugins.android.library)
     id("org.jetbrains.compose")
     alias(libs.plugins.compose.compiler)
-    id("com.vanniktech.maven.publish") version "0.31.0"
+    id("maven-publish")
+    id("signing")
 }
 
 group = "com.kashif.image_saver_plugin"
@@ -18,14 +17,16 @@ kotlin {
     }
     jvm("desktop")
 
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64(),
-    ).forEach {
-        it.binaries.framework {
-            baseName = "imagesaverplugin"
-            isStatic = true
+    if (System.getProperty("os.name").contains("Mac")) {
+        listOf(
+            iosX64(),
+            iosArm64(),
+            iosSimulatorArm64(),
+        ).forEach {
+            it.binaries.framework {
+                baseName = "imagesaverplugin"
+                isStatic = true
+            }
         }
     }
 
@@ -74,44 +75,22 @@ android {
     }
 }
 
-mavenPublishing {
-    coordinates(
-        groupId = "io.github.kashif-mehmood-km",
-        artifactId = "image_saver_plugin",
-        version = "0.0.6"
-    )
-
-
-
-    pom {
-        name.set("ImageSaverPlugin")
-        description.set("Image Saver Plugin for CameraK")
-        inceptionYear.set("2024")
-        url.set("https://github.com/kashif-e/CameraK")
-
-        licenses {
-            license {
-                name.set("MIT")
-                url.set("https://opensource.org/licenses/MIT")
-            }
-        }
-
-        developers {
-            developer {
-                id.set("Kashif-E")
-                name.set("Kashif")
-                email.set("kashismails@gmail.com")
-            }
-        }
-
-        scm {
-            url.set("https://github.com/kashif-e/CameraK")
+publishing {
+    repositories {
+        maven {
+            name = "localRepo"
+            url = uri("${rootProject.buildDir}/../../repo")
         }
     }
+    publications.withType<MavenPublication>().configureEach {
+        // you can customize coordinates if needed
+        groupId = "com.kashif.cameraK_fork"
+        artifactId = "imagesaverplugin"
+        version = "1.0"
+    }
+}
 
-    // Configure publishing to Maven Central
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
-
-    // Enable GPG signing for all publications
-    signAllPublications()
+signing {
+    // Only sign when keys are configured (like for Maven Central)
+    setRequired(false)
 }
