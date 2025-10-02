@@ -7,6 +7,8 @@ plugins {
     id("org.jetbrains.compose")
     alias(libs.plugins.compose.compiler)
     id("com.vanniktech.maven.publish") version "0.31.0"
+    id("maven-publish")
+    id("signing")
 }
 
 group = "com.kashif.camera_compose"
@@ -19,14 +21,16 @@ kotlin {
     }
     jvm("desktop")
 
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64(),
-    ).forEach {
-        it.binaries.framework {
-            baseName = "cameraK"
-            isStatic = true
+    if (System.getProperty("os.name").contains("Mac")) {
+        listOf(
+            iosX64(),
+            iosArm64(),
+            iosSimulatorArm64(),
+        ).forEach {
+            it.binaries.framework {
+                baseName = "cameraK"
+                isStatic = true
+            }
         }
     }
 
@@ -100,7 +104,7 @@ mavenPublishing {
     coordinates(
         groupId = "io.github.kashif-mehmood-km",
         artifactId = "camerak",
-        version = "0.0.11"
+        version = "0.0.12"
     )
 
 
@@ -136,4 +140,24 @@ mavenPublishing {
 
     // Enable GPG signing for all publications
     signAllPublications()
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "localRepo"
+            url = uri("${rootProject.buildDir}/../../repo")
+        }
+    }
+    publications.withType<MavenPublication>().configureEach {
+        // you can customize coordinates if needed
+        groupId = "com.kashif.cameraK_fork"
+        artifactId = "cameraK"
+        version = "0.0.12"
+    }
+}
+
+signing {
+    // Only sign when keys are configured (like for Maven Central)
+    setRequired(false)
 }
