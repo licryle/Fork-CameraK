@@ -38,6 +38,7 @@ actual class CameraController(
     internal var flashMode: FlashMode,
     internal var torchMode: TorchMode,
     internal var cameraLens: CameraLens,
+    internal var pinchToZoom: PinchToZoom,
     internal var imageFormat: ImageFormat,
     internal var qualityPriority: QualityPrioritization,
     internal var directory: Directory,
@@ -124,6 +125,12 @@ actual class CameraController(
             .setAspectRatioStrategy(AspectRatioStrategy.RATIO_4_3_FALLBACK_AUTO_STRATEGY)
             .build()
     }
+
+    fun zoomBy(factor: Float) {
+        val currentZoom = camera?.cameraInfo?.zoomState?.value?.zoomRatio ?: 1f
+        camera?.cameraControl?.setZoomRatio(currentZoom * factor)
+    }
+
 
     /**
      * Configure the image capture use case with settings adapted to current memory conditions

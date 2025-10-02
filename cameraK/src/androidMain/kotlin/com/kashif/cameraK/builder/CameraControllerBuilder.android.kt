@@ -7,6 +7,7 @@ import com.kashif.cameraK.enums.CameraLens
 import com.kashif.cameraK.enums.Directory
 import com.kashif.cameraK.enums.FlashMode
 import com.kashif.cameraK.enums.ImageFormat
+import com.kashif.cameraK.enums.PinchToZoom
 import com.kashif.cameraK.enums.QualityPrioritization
 import com.kashif.cameraK.enums.TorchMode
 import com.kashif.cameraK.plugins.CameraPlugin
@@ -26,6 +27,7 @@ class AndroidCameraControllerBuilder(
 
     private var flashMode: FlashMode = FlashMode.OFF
     private var cameraLens: CameraLens = CameraLens.BACK
+    private var pinchToZoom: PinchToZoom = PinchToZoom.OFF
     private var imageFormat: ImageFormat? = null
     private var directory: Directory? = null
     private var torchMode: TorchMode = TorchMode.AUTO
@@ -39,6 +41,11 @@ class AndroidCameraControllerBuilder(
 
     override fun setCameraLens(cameraLens: CameraLens): CameraControllerBuilder {
         this.cameraLens = cameraLens
+        return this
+    }
+
+    override fun setPinchToZoom(pinchToZoom: PinchToZoom): CameraControllerBuilder {
+        this.pinchToZoom = pinchToZoom
         return this
     }
 
@@ -82,6 +89,7 @@ class AndroidCameraControllerBuilder(
             lifecycleOwner = lifecycleOwner,
             flashMode = flashMode,
             cameraLens = cameraLens,
+            pinchToZoom = pinchToZoom,
             imageFormat = format,
             directory = dir,
             plugins = plugins,

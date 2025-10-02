@@ -5,6 +5,7 @@ import com.kashif.cameraK.enums.CameraLens
 import com.kashif.cameraK.enums.Directory
 import com.kashif.cameraK.enums.FlashMode
 import com.kashif.cameraK.enums.ImageFormat
+import com.kashif.cameraK.enums.PinchToZoom
 import com.kashif.cameraK.enums.QualityPrioritization
 import com.kashif.cameraK.enums.TorchMode
 import com.kashif.cameraK.plugins.CameraPlugin
@@ -15,6 +16,8 @@ import com.kashif.cameraK.plugins.CameraPlugin
 interface CameraControllerBuilder {
     fun setFlashMode(flashMode: FlashMode): CameraControllerBuilder
     fun setCameraLens(cameraLens: CameraLens): CameraControllerBuilder
+
+    fun setPinchToZoom(pinchToZoom: PinchToZoom): CameraControllerBuilder
 
     fun setImageFormat(imageFormat: ImageFormat): CameraControllerBuilder
     fun setDirectory(directory: Directory): CameraControllerBuilder

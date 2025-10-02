@@ -5,6 +5,7 @@ import com.kashif.cameraK.enums.CameraLens
 import com.kashif.cameraK.enums.Directory
 import com.kashif.cameraK.enums.FlashMode
 import com.kashif.cameraK.enums.ImageFormat
+import com.kashif.cameraK.enums.PinchToZoom
 import com.kashif.cameraK.enums.QualityPrioritization
 import com.kashif.cameraK.enums.TorchMode
 import com.kashif.cameraK.plugins.CameraPlugin
@@ -21,6 +22,7 @@ class DesktopCameraControllerBuilder : CameraControllerBuilder {
     private var flashMode: FlashMode = FlashMode.OFF
     private var torchMode: TorchMode = TorchMode.OFF
     private var cameraLens: CameraLens = CameraLens.BACK
+    private var pinchToZoom: PinchToZoom = PinchToZoom.OFF
     private var imageFormat: ImageFormat? = null
     private var directory: Directory? = null
     private var qualityPriority: QualityPrioritization = QualityPrioritization.NONE
@@ -43,6 +45,11 @@ class DesktopCameraControllerBuilder : CameraControllerBuilder {
 
     override fun setCameraLens(cameraLens: CameraLens): CameraControllerBuilder {
         this.cameraLens = cameraLens
+        return this
+    }
+
+    override fun setPinchToZoom(pinchToZoom: PinchToZoom): CameraControllerBuilder {
+        this.pinchToZoom = pinchToZoom
         return this
     }
 

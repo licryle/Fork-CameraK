@@ -1,9 +1,9 @@
 package com.kashif.cameraK.ui
 
+import android.view.ScaleGestureDetector
 import androidx.camera.view.PreviewView
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -12,6 +12,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.kashif.cameraK.builder.CameraControllerBuilder
 import com.kashif.cameraK.builder.createAndroidCameraControllerBuilder
 import com.kashif.cameraK.controller.CameraController
+import com.kashif.cameraK.enums.PinchToZoom
 
 /**
  * Android-specific implementation of [CameraPreview].
@@ -51,9 +52,27 @@ actual fun expectCameraPreview(
 
 
     AndroidView(
-        factory = { previewView },
-        modifier = modifier,
+        factory = { context ->
+            previewView.apply {
+                if (cameraController.pinchToZoom == PinchToZoom.ON) {
+                    val scaleDetector = ScaleGestureDetector(
+                        context,
+                        object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                            override fun onScale(detector: ScaleGestureDetector): Boolean {
+                                cameraController.zoomBy(detector.scaleFactor)
+                                return true
+                            }
+                        }
+                    )
 
-        )
-
+                    setOnTouchListener { view, event ->
+                        view.performClick()
+                        scaleDetector.onTouchEvent(event)
+                        true
+                    }
+                }
+            }
+        },
+        modifier = modifier
+    )
 }
