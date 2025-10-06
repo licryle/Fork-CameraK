@@ -14,10 +14,10 @@ class IOSCameraControllerBuilder : CameraControllerBuilder {
     private var flashMode: FlashMode = FlashMode.OFF
     private var torchMode: TorchMode = TorchMode.OFF
     private var cameraLens: CameraLens = CameraLens.BACK
+    private var pinchToZoom: PinchToZoom = PinchToZoom.OFF
     private var imageFormat: ImageFormat? = null
     private var directory: Directory? = null
     private var qualityPriority: QualityPrioritization = QualityPrioritization.NONE
-    private var cameraDeviceType: String = AVCaptureDeviceTypeBuiltInWideAngleCamera
     private val plugins = mutableListOf<CameraPlugin>()
 
     override fun setFlashMode(flashMode: FlashMode): CameraControllerBuilder {
@@ -30,6 +30,10 @@ class IOSCameraControllerBuilder : CameraControllerBuilder {
         return this
     }
 
+    override fun setPinchToZoom(pinchToZoom: PinchToZoom): CameraControllerBuilder {
+        this.pinchToZoom = pinchToZoom
+        return this
+    }
 
 
     override fun setImageFormat(imageFormat: ImageFormat): CameraControllerBuilder {
@@ -52,11 +56,6 @@ class IOSCameraControllerBuilder : CameraControllerBuilder {
         return this
     }
 
-    override fun setCameraDeviceType(cameraDeviceType: String): CameraControllerBuilder {
-        this.cameraDeviceType = cameraDeviceType
-        return this
-    }
-
     override fun addPlugin(plugin: CameraPlugin): CameraControllerBuilder {
         plugins.add(plugin)
         return this
@@ -75,8 +74,7 @@ class IOSCameraControllerBuilder : CameraControllerBuilder {
             imageFormat = format,
             directory = dir,
             plugins = plugins,
-            qualityPriority = qualityPriority,
-            cameraDeviceType = cameraDeviceType
+            qualityPriority = qualityPriority
         )
 
         return cameraController

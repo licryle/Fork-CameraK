@@ -50,7 +50,6 @@ actual class CameraController(
     internal var imageFormat: ImageFormat,
     internal var qualityPriority: QualityPrioritization,
     internal var directory: Directory,
-    internal var cameraDeviceType: String,
     internal var plugins: MutableList<CameraPlugin>
 ) : UIViewController(null, null) {
     private var isCapturing = atomic(false)
@@ -104,7 +103,7 @@ actual class CameraController(
     }
 
     private fun setupCamera() {
-        customCameraController.setupSession(cameraDeviceType)
+        customCameraController.setupSession()
         customCameraController.setupPreviewLayer(view)
 
         if (customCameraController.captureSession?.canAddOutput(metadataOutput) == true) {
