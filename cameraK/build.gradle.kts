@@ -8,35 +8,33 @@ plugins {
     alias(libs.plugins.compose.compiler)
     id("com.vanniktech.maven.publish") version "0.31.0"
     id("maven-publish")
-    id("signing")
 }
 
-group = "com.kashif.camera_compose"
+group = "com.kashif.cameraK_fork"
 version = "1.0"
 
 kotlin {
     jvmToolchain(11)
+
     androidTarget {
         publishLibraryVariants("release", "debug")
     }
     jvm("desktop")
 
-    if (System.getProperty("os.name").contains("Mac")) {
-        listOf(
-            iosX64(),
-            iosArm64(),
-            iosSimulatorArm64(),
-        ).forEach {
-            it.binaries.framework {
-                baseName = "cameraK"
-                isStatic = true
-            }
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
+
+    // 👇 Needed for iOS frameworks (.klib + .framework)
+    targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
+        binaries.framework {
+            baseName = "cameraK"
         }
     }
 
     sourceSets {
-        val desktopMain by getting{
-            dependencies{
+        val desktopMain by getting {
+            dependencies {
                 api(libs.javacv.platform)
             }
         }
@@ -54,7 +52,6 @@ kotlin {
 
         commonTest.dependencies {
             api(kotlin("test"))
-
         }
 
         androidMain.dependencies {
@@ -67,16 +64,8 @@ kotlin {
             api(libs.androidx.activityCompose)
             api(libs.androidx.startup.runtime)
             api(libs.core)
-
         }
-
     }
-
-    //https://kotlinlang.org/docs/native_objc_interop.html#export_of_kdoc_comments_to_generated_objective_c_headers
-//    targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
-//        compilations["main"].compilerOptions.options.freeCompilerArgs.add("_Xexport_kdoc")
-//    }
-
 }
 
 android {
@@ -93,71 +82,39 @@ android {
             withSourcesJar()
         }
 
-        // For debug variant, we exclude Javadoc and sources to prevent conflicts
-        singleVariant("debug") {
-            // Exclude Javadoc and sources JARs for debug variant
-        }
+        singleVariant("debug")
     }
-}
-
-mavenPublishing {
-    coordinates(
-        groupId = "io.github.kashif-mehmood-km",
-        artifactId = "camerak",
-        version = "0.0.12"
-    )
-
-
-
-    pom {
-        name.set("CameraK")
-        description.set("Camera Library to work on both Android/iOS.")
-        inceptionYear.set("2024")
-        url.set("https://github.com/kashif-e/CameraK")
-
-        licenses {
-            license {
-                name.set("MIT")
-                url.set("https://opensource.org/licenses/MIT")
-            }
-        }
-
-        developers {
-            developer {
-                id.set("Kashif-E")
-                name.set("Kashif")
-                email.set("kashismails@gmail.com")
-            }
-        }
-
-        scm {
-            url.set("https://github.com/kashif-e/CameraK")
-        }
-    }
-
-    // Configure publishing to Maven Central
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
-
-    // Enable GPG signing for all publications
-    signAllPublications()
 }
 
 publishing {
-    repositories {
-        maven {
-            name = "localRepo"
-            url = uri("${rootProject.buildDir}/../../repo")
-        }
-    }
     publications.withType<MavenPublication>().configureEach {
         // you can customize coordinates if needed
         groupId = "com.kashif.cameraK_fork"
         artifactId = "cameraK"
         version = "0.0.12"
     }
+
+    repositories {
+        maven {
+            name = "localRepo"
+            url = uri("${rootProject.buildDir}/../../repo")
+        }
+    }
 }
 
-signing {
-    // Only sign when keys are configured (like for Maven Central)
-    setRequired(false)
+// Disable all signing
+afterEvaluate {
+    tasks.withType<Sign>().configureEach {
+        enabled = false
+    }
+    publishing {
+        publications.withType<MavenPublication>().configureEach {
+            val pubName = name
+            // Give each target a unique artifactId
+            artifactId = when (pubName) {
+                "kotlinMultiplatform" -> "camerak"
+                else -> "camerak-$pubName"
+            }
+        }
+    }
 }
