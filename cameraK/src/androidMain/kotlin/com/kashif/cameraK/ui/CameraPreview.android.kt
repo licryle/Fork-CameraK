@@ -30,7 +30,6 @@ actual fun expectCameraPreview(
     val context = LocalContext.current
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
 
-    val isCameraReady = remember { mutableStateOf(false) }
     val cameraController = remember {
         createAndroidCameraControllerBuilder(context, lifecycleOwner)
             .apply(cameraConfiguration)
@@ -40,7 +39,7 @@ actual fun expectCameraPreview(
 
     val previewView = remember { PreviewView(context) }
 
-    DisposableEffect(previewView) {
+    DisposableEffect(Unit) {
         cameraController.bindCamera(previewView) {
             onCameraControllerReady(cameraController)
         }
