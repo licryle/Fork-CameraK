@@ -1,5 +1,8 @@
 import com.vanniktech.maven.publish.SonatypeHost
+import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.compose.compose
+
+var os: OperatingSystem? = OperatingSystem.current()
 
 plugins {
     alias(libs.plugins.multiplatform)
@@ -8,6 +11,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     id("com.vanniktech.maven.publish") version "0.31.0"
     id("maven-publish")
+    id("signing")
 }
 
 group = "com.kashif.cameraK_fork"
@@ -21,11 +25,20 @@ kotlin {
     }
     jvm("desktop")
 
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
 
-    // 👇 Needed for iOS frameworks (.klib + .framework)
+    if (os?.isMacOsX == true) {
+        listOf(
+            iosX64(),
+            iosArm64(),
+            iosSimulatorArm64(),
+        ).forEach {
+            it.binaries.framework {
+                baseName = "cameraK"
+                isStatic = true
+            }
+        }
+    }
+
     targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
         binaries.framework {
             baseName = "cameraK"
@@ -91,14 +104,11 @@ publishing {
         // you can customize coordinates if needed
         groupId = "com.kashif.cameraK_fork"
         artifactId = "cameraK"
-        version = "0.0.12"
+        version = "0.0.13"
     }
 
     repositories {
-        maven {
-            name = "localRepo"
-            url = uri("${rootProject.buildDir}/../../repo")
-        }
+        mavenLocal()
     }
 }
 
