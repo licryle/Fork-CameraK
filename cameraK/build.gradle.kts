@@ -39,12 +39,6 @@ kotlin {
         }
     }
 
-    targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
-        binaries.framework {
-            baseName = "cameraK"
-        }
-    }
-
     sourceSets {
         val desktopMain by getting {
             dependencies {
